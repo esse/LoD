@@ -24,15 +24,19 @@ class User
 end
 
 class Address
+  def initialize(*)
+  end
 end
 
 class City
+  def initialize(*)
+  end 
 end
 
 class UserRepository
   DATA = [
-    User.new(email: 'user0@example.com'),
-    User.new(email: 'user1@example.com'),
+    User.new(email: 'user0@example.com', address: Address.new(City.new("Warsaw"))),
+    User.new(email: 'user1@example.com')
   ]
 
   def self.find(id)
