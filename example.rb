@@ -1,4 +1,5 @@
 require 'json'
+require 'active_support/core_ext/module/delegation'
 
 class User
 
@@ -27,6 +28,8 @@ class User
 
   private
   attr_reader :email
+
+  delegate :city, to: :address, allow_nil: true #co z dalszymi wywołaniami metod?
 end
 
 class Address
@@ -36,6 +39,9 @@ class Address
   def initialize(city=nil)
     @city = city
   end
+
+  delegate :name, to: :city, allow_nil: true
+  delegate :canonical_name, to: :city, allow_nil: true
 end
 
 class City
