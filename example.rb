@@ -1,6 +1,7 @@
 require 'json'
 require_relative 'null_objects.rb'
 require_relative 'serializers.rb'
+require_relative 'factories.rb'
 
 class User
   attr_reader :email
@@ -38,8 +39,8 @@ end
 
 class UserRepository
   DATA = {
-    0 => User.new(email: 'user0@example.com', address: Address.new(City.new("Warsaw"))),
-    1 => User.new(email: 'user1@example.com')
+    0 => UserFactory.create_user(email: 'user0@example.com', city_name: "Warsaw"),
+    1 => UserFactory.create_user(email: 'user1@example.com')
   }
 
   def self.find(id)
