@@ -17,7 +17,7 @@ class User
   def as_json(*)
     {
       email: email,
-      city: address.city.canonical_name
+      city: address&.city&.canonical_name
     }
   end
 
