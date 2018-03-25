@@ -1,6 +1,9 @@
 require 'json'
+require_relative 'null_objects.rb'
+require_relative 'serializers.rb'
 
 class User
+  attr_reader :email
 
   def initialize(email:, address: nil)
     @email = email
@@ -13,24 +16,9 @@ class User
   def build_address(*params)
     @address = Address.new(*params)
   end
-
-  def as_json(*)
-    {
-      email: email,
-      city: address.city.canonical_name
-    }
-  end
-
-  def to_json
-    as_json.to_json
-  end
-
-  private
-  attr_reader :email
 end
 
 class Address
-
   attr_reader :city
 
   def initialize(city=nil)

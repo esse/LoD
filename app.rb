@@ -10,5 +10,5 @@ get '/' do
 end
 
 get '/:id' do
-  UserRepository.find(params[:id].to_i).to_json
+  UserSerializer.new(UserRepository.find(params[:id].to_i)).to_json
 end
