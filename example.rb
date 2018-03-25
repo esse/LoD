@@ -2,7 +2,7 @@ require 'json'
 
 class User
 
-  def initialize(email:, address: nil)
+  def initialize(email:, address: NullAddress.new)
     @email = email
     @address = address
   end
@@ -33,8 +33,20 @@ class Address
 
   attr_reader :city
 
-  def initialize(city=nil)
+  def initialize(city=NullCity.new)
     @city = city
+  end
+end
+
+class NullAddress
+  def city
+    OpenStruct.new(city: nil, canonical_name: nil)
+  end
+end
+
+class NullCity
+  def canonical_name
+    nil
   end
 end
 
