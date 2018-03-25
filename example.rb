@@ -1,3 +1,5 @@
+require 'json'
+
 class User
 
   def initialize(email:, address: nil)
@@ -19,25 +21,38 @@ class User
     }
   end
 
+  def to_json
+    as_json.to_json
+  end
+
   private
   attr_reader :email
 end
 
 class Address
-  def initialize(*)
+
+  attr_reader :city
+
+  def initialize(city=nil)
+    @city = city
   end
 end
 
 class City
-  def initialize(*)
-  end 
+  def initialize(name)
+    @name = name
+  end
+
+  def canonical_name
+    @name
+  end
 end
 
 class UserRepository
-  DATA = [
-    User.new(email: 'user0@example.com', address: Address.new(City.new("Warsaw"))),
-    User.new(email: 'user1@example.com')
-  ]
+  DATA = {
+    0 => User.new(email: 'user0@example.com', address: Address.new(City.new("Warsaw"))),
+    1 => User.new(email: 'user1@example.com')
+  }
 
   def self.find(id)
     DATA[id]
@@ -48,7 +63,7 @@ class UserRepository
   end
 
   def self.all_ids
-    (0..DATA.size-1).to_a
+    DATA.keys
   end
 
 end
