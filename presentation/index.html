@@ -9,23 +9,165 @@
         <!-- Slides are separated by three dashes (quick 'n dirty regular expression) -->
         <section data-markdown data-separator="---">
             <script type="text/template">
-                # Demo 1
-                Slide 1
+                # Prawo Demeter
                 ---
-                ## Demo 1
-                Slide 2
+                ## Co to jest?
                 ---
-                ## Demo 1
-                Slide 3
+                Metoda danego obiektu może odwoływać się jedynie do metod należących do:
+                * tego samego obiektu,
+                * dowolnego parametru przekazanego do niej,
+                * dowolnego obiektu przez nią stworzonego,
+                * dowolnego składnika klasy, do której należy dana metoda.
+                ---
+                ## Dlaczego?
+                ---
+                ```ruby
+                .&
+                ```
+                ---
+                ## Przykład z bloga w internecie
+                ---
+                ```ruby
+                class User
+                  if account && account.owner && account.owner.address
+                  …
+                  end
+                …
+                end
+                ```
+                ---
+                ```ruby
+                account&.owner&.address
+                ```
+                ---
+                ![Kill it with fire](images/fire.gif)
+                ---
+                Atrybut zmienił nazwę - na address_name
+                ---
+                Nagle zmianie ulega klasa niepowiązana bezpośrednio!
+                ---
+                ## Single responsibility principle
+                Zasada mówiąca, że nigdy nie powinno być więcej niż jednego powodu do modyfikacji klasy
+                ---
+                ## User nie jest tylko delegatem
+                ---
+                ```ruby
+                account&.owner&.address_name
+                ```
+                ---
+                ## Wady?
+                ---
+                * Zmiana jednej klasy wprowadza zmiany w innych niepowiązanych
+                ---
+                * Łatwo zapomnieć zmienić i dostać `NoMethodError` (kompilator nie sprawdza za nas metod)
+                ---
+                ## A gdyby sprawdzał?
+                ---
+                ```crystal
+                  class User
+                    getter :account
+                    def initialize(@account : Account)
+                    end
+
+                    def validate!
+                      if account && account.owner && account.owner.address
+                        # do sth
+                        # …
+                      end
+                    end
+                  end
+                ```
+                ---
+                ```crystal
+                  class Account
+                    getter :owner
+                    def initialize(@owner : Owner)
+                    end
+                  end
+
+                  class Owner
+                    getter :address_name
+                    def initialize(@address_name : String)
+                    end
+                  end
+
+                  user = User.new(Account.new(Owner.new("Jelinka 48")))
+                  user.validate!
+                ```
+                ---
+                ```
+                esse:~$ crystal run test.cr
+                Error in test.cr:27: instantiating 'User#validate!()'
+
+                user.validate!
+                     ^~~~~~~~~
+
+                in test.cr:7: undefined method 'address' for Owner
+
+                    if account && account.owner && account.owner.address
+                                                                 ^~~~~~~
+               ```
+               ---
+               ## Niby z nilem też nie ma problemu…
+               ---
+               ```
+               User.new(Account.new(nil))
+               ```
+               ```
+               Error in test.cr:26: no overload matches 'Account.new'
+               with type Nil
+               Overloads are:
+                - Account.new(owner : Owner)
+
+               user = User.new(Account.new(nil))
+               ```
+               ---
+               ## Ale!
+               ---
+               ### Zmiana nazwy zmiennej wywali kompilację,ale wciąż musimy zmieniać kod w niepowiązanych klasach
+               ---
+               ![okay](images/OkayGuy.jpg)
+               ---
+               ## Musimy z tym żyć
+               ---
+               ![false](images/false.jpg)
+               ---
+               ## Złamaliśmy prawo demeter
+               ---
+               ## User woła metodę nie spełniającą warunku
+               ---
+               ## Potocznie: "za dużo kropek w wywołaniu"
+               ---
+               (Powyższa zasada nie działa gdy wywołujemy metody na klasach wbudowanych, np. user wołający `account.domain.downcase` nie łamie zasady)
+               ---
+               ## Ponosimy tego konsekwencje
+               ---
+               ![quote](images/quote.jpg)
+               ---
+               ## Poprawmy zamiast tego architekturę
+               ---
+               ## It's coding time!
+               ---
+               ## Podsumowanie
+               ---
+               ## Gdy trafiamy na problem który wymaga od nas safe traverse operator czy więcej niż jedno wywołanie kropki
+               ---
+               ## Przemyślmy czy nasza struktura obiektowa jest poprawna
             </script>
         </section>
 			</div>
 		</div>
+    <script src="js/head.min.js"></script>
 		<script src="js/reveal.js"></script>
     <script src="js/marked.js"></script>
     <script src="js/markdown.js"></script>
 		<script>
-			Reveal.initialize();
+      Reveal.initialize({
+      	// More info https://github.com/hakimel/reveal.js#dependencies
+      	dependencies: [
+      		{ src: 'js/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      	]
+      });
 		</script>
 	</body>
 </html>
