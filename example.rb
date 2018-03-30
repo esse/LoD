@@ -1,4 +1,5 @@
 require 'json'
+require 'dry-monads'
 
 class User
 
@@ -17,7 +18,7 @@ class User
   def as_json(*)
     {
       email: email,
-      city: address&.city&.canonical_name
+      city: Dry::Monads::Maybe(address).fmap(&:city).fmap(&:canonical_name).value_or(nil)
     }
   end
 
